@@ -1,0 +1,6 @@
+<!-- Alert -->
+<% if (alert.message !== "") { %>
+  <div class="alert alert-<%= alert.alertStatus %> " role="alert">
+    <%= alert.alertMessage %>
+  </div>
+  <% } %>
