@@ -1,4 +1,7 @@
-const Category = require('../model/Category');
+const Category = require('../models/Category');
+const Bank = require('../models/Bank');
+const fs = require('fs-extra');
+const path = require('path');
 
 module.exports = {
     viewDashboard: (req, res) => {
@@ -41,7 +44,7 @@ module.exports = {
             req.flash('alertStatus', 'success');
             res.redirect('/admin/category'); // redirect ke category page
         } catch (error) {
-            req.flash('alertMessage', `$error.message`);
+            req.flash('alertMessage', `${error.message}`);
             req.flash('alertStatus', 'danger');
             res.redirect('/admin/category');
         }
@@ -63,7 +66,7 @@ module.exports = {
             await category.save(); // save data yang sudah diupdate user
             res.redirect('/admin/category'); // redirect kecategory page
         } catch (error) {
-            req.flash('alertMessage', `$error.message`);
+            req.flash('alertMessage', `${error.message}`);
             req.flash('alertStatus', 'danger');
             res.redirect('/admin/category'); // redirect kecategory page
         }
@@ -85,17 +88,114 @@ module.exports = {
             req.flash('alertStatus', 'success');
             res.redirect('/admin/category'); // redirect ke category page
         } catch (error) {
-            req.flash('alertMessage', `$error.message`);
+            req.flash('alertMessage', `${error.message}`);
             req.flash('alertStatus', 'danger');
             res.redirect('/admin/category'); // redirect ke category page
         }
     },
 
-    viewBank: (req, res) => {
-        res.render('admin/bank/view_bank.ejs', {
-            title: "Staycation | Bank"
-        });
+    viewBank: async(req, res) => {
+        try {
+            const bank = await Bank.find(); // get data user from database
+            const alertMessage = req.flash('alertMessage');
+            const alertStatus = req.flash('alertStatus');
+            const alert = {
+                alertMessage,
+                alertStatus
+            }
+            res.render('admin/bank/view_bank.ejs', {
+                bank,
+                title: "Staycation | Bank",
+                alert
+            });
+        } catch (error) {
+            req.flash('alertMessage', `${error.message}`);
+            req.flash('alertStatus', 'danger');
+            res.redirect('/admin/bank');
+        }
     },
+
+    addBank: async(req, res) => {
+        try {
+            // Get data input from user
+            const {
+                name,
+                nameBank,
+                nomorRekening,
+            } = req.body;
+            // passing data from user into mongodb
+            await Bank.create({
+                name,
+                nameBank,
+                nomorRekening,
+                imageUrl: `images/${req.file.filename}`
+            });
+            req.flash('alertMessage', 'Success Add Bank');
+            req.flash('alertStatus', 'success');
+            res.redirect('/admin/bank');
+        } catch (error) {
+            req.flash('alertMessage', `${error.message}`);
+            req.flash('alertStatus', 'danger');
+            res.redirect('/admin/bank');
+        }
+    },
+
+    editBank: async(req, res) => {
+        try {
+            const {
+                id,
+                name,
+                nameBank,
+                nomorRekening
+            } = req.body;
+            const bank = await Bank.findOne({
+                _id: id
+            });
+            if (req.file === undefined) {
+                bank.name = name;
+                bank.nameBank = nameBank;
+                bank.nomorRekening = nomorRekening;
+                await bank.save();
+                req.flash('alertMessage', 'Success Update Bank');
+                req.flash('alertStatus', 'success');
+                res.redirect('/admin/bank');
+            } else {
+                await fs.unlink(path.join(`public/${bank.imageUrl}`));
+                bank.name = name;
+                bank.nameBank = nameBank;
+                bank.nomorRekening = nomorRekening;
+                bank.imageUrl = `images/${req.file.filename}`
+                await bank.save();
+                req.flash('alertMessage', 'Success Update Bank');
+                req.flash('alertStatus', 'success');
+                res.redirect('/admin/bank');
+            }
+        } catch (error) {
+            req.flash('alertMessage', `${error.message}`);
+            req.flash('alertStatus', 'danger');
+            res.redirect('/admin/bank');
+        }
+    },
+
+    deleteBank: async(req, res) => {
+        try {
+            const {
+                id
+            } = req.params;
+            const bank = await Bank.findOne({
+                _id: id
+            });
+            await bank.remove();
+            req.flash('alertMessage', 'Success Delete Bank');
+            req.flash('alertStatus', 'success');
+            res.redirect('/admin/bank');
+        } catch (error) {
+            req.flash('alertMessage', `${error.message}`);
+            req.flash('alertStatus', 'danger');
+            res.redirect('/admin/bank');
+        }
+    },
+
     viewItem: (req, res) => {
         res.render('admin/item/view_item.ejs', {
             title: "Staycation | Item"

@@ -11,7 +11,7 @@ const bookingSchema = new mongoose.Schema({
     },
     itemId: [{
         _id: {
-            type: ObjectId,
+            type: Object,
             ref: 'Item',
             required: true
         },
@@ -25,11 +25,11 @@ const bookingSchema = new mongoose.Schema({
         }
     }],
     memberId: [{
-        type: ObjectId,
+        type: Object,
         ref: 'Member'
     }],
     bankId: [{
-        type: ObjectId,
+        type: Object,
         ref: 'Bank'
     }],
     proofPayment: {
