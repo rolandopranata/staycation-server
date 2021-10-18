@@ -1,11 +1,11 @@
 const mongoose = require('mongoose');
 
 const bankSchema = new mongoose.Schema({
-    bankName: {
+    nameBank: {
         type: String,
         required: true
     },
-    rekeningNumber: {
+    nomorRekening: {
         type: String,
         required: true
     },
@@ -13,6 +13,10 @@ const bankSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    imageUrl: {
+        type: String,
+        required: true
+    }
 })
 
 module.exports = mongoose.model("Bank", bankSchema);

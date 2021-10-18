@@ -3,8 +3,9 @@ const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
 const logger = require('morgan');
-// import mongoose
-const mongoose = require('mongoose');
+const mongoose = require('mongoose'); // Import mongoose
+const session = require('express-session'); // Import express session
+const flash = require('connect-flash');
 const methodOvveride = require('method-override');
 
 // Mongoose connection
@@ -23,7 +24,16 @@ const app = express();
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
 app.use(methodOvveride('_method'));
-
+// Using express session
+app.use(session({
+    secret: 'Secret',
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+        maxAge: 60000
+    }
+}));
+app.use(flash()); // Using connect-flash
 app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({
