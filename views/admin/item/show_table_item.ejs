@@ -1,0 +1,55 @@
+<div class="tab-pane fade show active" id="showItem" role="tabpanel" aria-labelledby="home-tab">
+  <div class="card shadow mb-4 mt-2">
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+          <thead>
+            <tr>
+              <th>No</th>
+              <th>Title</th>
+              <th>Price</th>
+              <th>Country</th>
+              <th>City</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <% item.forEach((data, i) => { %>
+              <tr>
+                <td>
+                  <%= i + 1 %>
+                </td>
+                <td>
+                  <%= data.title %>
+                </td>
+                <td>$
+                  <%= data.price %>
+                </td>
+                <td>
+                  <%= data.country %>
+                </td>
+                <td>
+                  <%= data.city %>
+                </td>
+                <td>
+                  <form action="/admin/item/<%= data._id %>?_method=DELETE" method="POST">
+                    <a href="/admin/item/show-image/<%= data._id %>" class="btn btn-info btn-circle btn-sm mr-2"><i class="fas fa-image"></i
+									></a>
+                    <a href="/admin/item/<%= data._id %>" class="btn btn-success btn-circle btn-sm">
+                      <i class="fas fa-edit"></i>
+                    </a>
+                    <button type="submit" href="" class="btn btn-danger btn-circle btn-sm mx-2">
+										<i class="fas fa-trash"></i>
+									</button>
+                    <a href="#" class="btn btn-warning btn-circle btn-sm mr-2"><i class="fas fa-plus"></i
+									></a>
+                  </form>
+                </td>
+              </tr>
+              <% }) %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
