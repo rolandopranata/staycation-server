@@ -4,6 +4,7 @@ const Category = require("../models/Category");
 const Bank = require("../models/Bank");
 const Item = require("../models/Item");
 const Image = require("../models/Image");
+const Feature = require("../models/Feature");
 
 module.exports = {
     viewDashboard: (req, res) => {
@@ -35,7 +36,9 @@ module.exports = {
     addCategory: async(req, res) => {
         try {
             // create data dari user
-            const { name } = req.body; // Get data from user
+            const {
+                name
+            } = req.body; // Get data from user
             await Category.create({
                 name,
             });
@@ -52,7 +55,10 @@ module.exports = {
     editCategory: async(req, res) => {
         try {
             // search id berdasarkan input data dari user
-            const { id, name } = req.body;
+            const {
+                id,
+                name
+            } = req.body;
             const category = await Category.findOne({
                 _id: id,
             });
@@ -72,7 +78,9 @@ module.exports = {
     deleteCategory: async(req, res) => {
         try {
             // Get id from params
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             // Cari id data collections category db_mern20 from mongodb
             const category = await Category.findOne({
                 _id: id,
@@ -112,7 +120,11 @@ module.exports = {
     addBank: async(req, res) => {
         try {
             // Get data input from user
-            const { name, nameBank, nomorRekening } = req.body;
+            const {
+                name,
+                nameBank,
+                nomorRekening
+            } = req.body;
             // passing data from user into mongodb
             await Bank.create({
                 name,
@@ -132,7 +144,12 @@ module.exports = {
 
     editBank: async(req, res) => {
         try {
-            const { id, name, nameBank, nomorRekening } = req.body;
+            const {
+                id,
+                name,
+                nameBank,
+                nomorRekening
+            } = req.body;
             const bank = await Bank.findOne({
                 _id: id,
             });
@@ -164,7 +181,9 @@ module.exports = {
 
     deleteBank: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const bank = await Bank.findOne({
                 _id: id,
             });
@@ -214,7 +233,13 @@ module.exports = {
 
     addItem: async(req, res) => {
         try {
-            const { categoryId, title, price, city, about } = req.body;
+            const {
+                categoryId,
+                title,
+                price,
+                city,
+                about
+            } = req.body;
             if (req.files.length > 0) {
                 const category = await Category.findOne({
                     _id: categoryId,
@@ -253,7 +278,9 @@ module.exports = {
 
     showImageItem: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const item = await Item.findOne({
                 _id: id,
             }).populate({
@@ -277,10 +304,20 @@ module.exports = {
 
     showEditItem: async(req, res) => {
         try {
-            const { id } = req.params;
-            const item = await Item.findOne({ _id: id })
-                .populate({ path: "imageId", select: "id imageUrl" })
-                .populate({ path: "categoryId", select: "id name" });
+            const {
+                id
+            } = req.params;
+            const item = await Item.findOne({
+                    _id: id
+                })
+                .populate({
+                    path: "imageId",
+                    select: "id imageUrl"
+                })
+                .populate({
+                    path: "categoryId",
+                    select: "id name"
+                });
             const category = await Category.find();
             const alertMessage = req.flash("alertMessage");
             const alertStatus = req.flash("alertStatus");
@@ -304,15 +341,33 @@ module.exports = {
 
     editItem: async(req, res) => {
         try {
-            const { id } = req.params;
-            const { categoryId, title, price, city, about } = req.body;
-            const item = await Item.findOne({ _id: id })
-                .populate({ path: "imageId", select: "id imageUrl" })
-                .populate({ path: "categoryId", select: "id name" });
+            const {
+                id
+            } = req.params;
+            const {
+                categoryId,
+                title,
+                price,
+                city,
+                about
+            } = req.body;
+            const item = await Item.findOne({
+                    _id: id
+                })
+                .populate({
+                    path: "imageId",
+                    select: "id imageUrl"
+                })
+                .populate({
+                    path: "categoryId",
+                    select: "id name"
+                });
 
             if (req.files.length > 0) {
                 for (let i = 0; i < item.imageId.length; i++) {
-                    const imageUpdate = await Image.findOne({ _id: item.imageId[i]._id });
+                    const imageUpdate = await Image.findOne({
+                        _id: item.imageId[i]._id
+                    });
                     await fs.unlink(path.join(`public/${imageUpdate.imageUrl}`));
                     imageUpdate.imageUrl = `images/${req.files[i].filename}`;
                     await imageUpdate.save();
@@ -346,10 +401,16 @@ module.exports = {
 
     deleteItem: async(req, res) => {
         try {
-            const { id } = req.params;
-            const item = await Item.findOne({ _id: id }).populate("imageId");
+            const {
+                id
+            } = req.params;
+            const item = await Item.findOne({
+                _id: id
+            }).populate("imageId");
             for (let i = 0; i < item.imageId.length; i++) {
-                Image.findOne({ _id: item.imageId[i]._id })
+                Image.findOne({
+                        _id: item.imageId[i]._id
+                    })
                     .then((image) => {
                         fs.unlink(path.join(`public/${image.imageUrl}`));
                         image.remove();
@@ -368,6 +429,137 @@ module.exports = {
             req.flash("alertMessage", `${error.message}`);
             req.flash("alertStatus", "danger");
             res.redirect("/admin/item");
+        }
+    },
+
+    viewDetailItem: async(req, res) => {
+        const {
+            itemId
+        } = req.params;
+        try {
+            const alertMessage = req.flash("alertMessage");
+            const alertStatus = req.flash("alertStatus");
+            const alert = {
+                alertMessage,
+                alertStatus,
+            };
+            const feature = await Feature.find({
+                itemId: itemId
+            });
+            res.render("admin/item/detail_item/view_detail_item", {
+                title: "Staycation | Detail Item",
+                alert,
+                itemId,
+                feature
+            });
+        } catch (error) {
+            req.flash("alertMessage", `${error.message}`);
+            req.flash("alertStatus", "danger");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        }
+    },
+
+    addFeature: async(req, res) => {
+        const {
+            name,
+            qty,
+            itemId
+        } = req.body;
+
+        try {
+            if (!req.file) {
+                req.flash("alertMessage", "Image not found");
+                req.flash("alertStatus", "danger");
+                res.redirect(`/admin/item/show-detail-item/${itemId}`);
+            }
+            const feature = await Feature.create({
+                name,
+                qty,
+                itemId,
+                imageUrl: `images/${req.file.filename}`,
+            });
+
+            const item = await Item.findOne({
+                _id: itemId
+            });
+            item.featureId.push({
+                _id: feature._id
+            });
+            await item.save();
+            req.flash("alertMessage", "Success Add Feature");
+            req.flash("alertStatus", "success");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        } catch (error) {
+            req.flash("alertMessage", `${error.message}`);
+            req.flash("alertStatus", "danger");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        }
+    },
+
+    editFeature: async(req, res) => {
+        const {
+            id,
+            name,
+            qty,
+            itemId
+        } = req.body;
+        try {
+            const feature = await Feature.findOne({
+                _id: id,
+            });
+            if (req.file === undefined) {
+                feature.name = name;
+                feature.qty = qty;
+                await feature.save();
+                req.flash("alertMessage", "Success Update Feature");
+                req.flash("alertStatus", "success");
+                res.redirect(`/admin/item/show-detail-item/${itemId}`);
+            } else {
+                await fs.unlink(path.join(`public/${feature.imageUrl}`));
+                feature.name = name;
+                feature.qty = qty;
+                feature.imageUrl = `images/${req.file.filename}`;
+                await feature.save();
+                req.flash("alertMessage", "Success Update Feature");
+                req.flash("alertStatus", "success");
+                res.redirect(`/admin/item/show-detail-item/${itemId}`);
+            }
+        } catch (error) {
+            req.flash("alertMessage", `${error.message}`);
+            req.flash("alertStatus", "danger");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        }
+    },
+
+    deleteFeature: async(req, res) => {
+        const {
+            id,
+            itemId
+        } = req.params;
+        const feature = await Feature.findOne({
+            _id: id,
+        });
+        try {
+            const item = await Item.findOne({
+                _id: itemId
+            }).populate('featureId');
+            for (let i = 0; i < item.featureId.length; i++) {
+                if (item.featureId[i]._id.toString() === feature._id.toString()) {
+                    item.featureId.pull({
+                        _id: feature._id
+                    });
+                    await item.save();
+                }
+            }
+            await fs.unlink(path.join(`public/${feature.imageUrl}`));
+            await feature.remove();
+            req.flash("alertMessage", "Success Delete Feature");
+            req.flash("alertStatus", "success");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
+        } catch (error) {
+            req.flash("alertMessage", `${error.message}`);
+            req.flash("alertStatus", "danger");
+            res.redirect(`/admin/item/show-detail-item/${itemId}`);
         }
     },
 
