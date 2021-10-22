@@ -1,9 +1,11 @@
 const router = require("express").Router();
 const adminController = require("../controllers/adminController");
 const { uploadSingle, uploadMultiple } = require("../middleware/multer");
+const auth = require("../middleware/auth");
 
 router.get("/signin", adminController.viewSignin);
 router.post("/signin", adminController.actionSignin);
+router.use(auth);
 router.get("/dashboard", adminController.viewDashboard);
 // endpoint category
 router.get("/category", adminController.viewCategory); // get data from mongodb collections category

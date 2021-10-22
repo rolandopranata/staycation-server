@@ -18,11 +18,15 @@ module.exports = {
                 alertMessage,
                 alertStatus,
             };
-            // render data user
-            res.render("index", {
-                alert,
-                title: "Staycation | Sign In",
-            });
+            if (req.session.user === null || req.session.user === undefined) {
+                // render data user
+                res.render("index", {
+                    alert,
+                    title: "Staycation | Sign In",
+                });
+            } else {
+                res.redirect("/admin/dashboard");
+            }
         } catch (error) {
             res.redirect("/admin/signin");
         }
@@ -44,6 +48,10 @@ module.exports = {
                 req.flash("alertStatus", "danger");
                 res.redirect("/admin/signin");
             }
+            req.session.user = {
+                id: user.id,
+                username: user.username,
+            };
             res.redirect("/admin/dashboard");
         } catch (error) {
             res.redirect("/admin/signin");
