@@ -7,6 +7,8 @@ const Item = require("../models/Item");
 const Image = require("../models/Image");
 const Feature = require("../models/Feature");
 const Activity = require("../models/Activity");
+const Booking = require("../models/Booking");
+const Member = require("../models/Member");
 const Users = require("../models/Users");
 
 module.exports = {
@@ -33,7 +35,10 @@ module.exports = {
     },
     actionSignin: async(req, res) => {
         try {
-            const { username, password } = req.body;
+            const {
+                username,
+                password
+            } = req.body;
             const user = await Users.findOne({
                 username: username,
             });
@@ -95,7 +100,9 @@ module.exports = {
     addCategory: async(req, res) => {
         try {
             // create data dari user
-            const { name } = req.body; // Get data from user
+            const {
+                name
+            } = req.body; // Get data from user
             await Category.create({
                 name,
             });
@@ -112,7 +119,10 @@ module.exports = {
     editCategory: async(req, res) => {
         try {
             // search id berdasarkan input data dari user
-            const { id, name } = req.body;
+            const {
+                id,
+                name
+            } = req.body;
             const category = await Category.findOne({
                 _id: id,
             });
@@ -132,7 +142,9 @@ module.exports = {
     deleteCategory: async(req, res) => {
         try {
             // Get id from params
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             // Cari id data collections category db_mern20 from mongodb
             const category = await Category.findOne({
                 _id: id,
@@ -173,7 +185,11 @@ module.exports = {
     addBank: async(req, res) => {
         try {
             // Get data input from user
-            const { name, nameBank, nomorRekening } = req.body;
+            const {
+                name,
+                nameBank,
+                nomorRekening
+            } = req.body;
             // passing data from user into mongodb
             await Bank.create({
                 name,
@@ -193,7 +209,12 @@ module.exports = {
 
     editBank: async(req, res) => {
         try {
-            const { id, name, nameBank, nomorRekening } = req.body;
+            const {
+                id,
+                name,
+                nameBank,
+                nomorRekening
+            } = req.body;
             const bank = await Bank.findOne({
                 _id: id,
             });
@@ -225,7 +246,9 @@ module.exports = {
 
     deleteBank: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const bank = await Bank.findOne({
                 _id: id,
             });
@@ -276,7 +299,13 @@ module.exports = {
 
     addItem: async(req, res) => {
         try {
-            const { categoryId, title, price, city, about } = req.body;
+            const {
+                categoryId,
+                title,
+                price,
+                city,
+                about
+            } = req.body;
             if (req.files.length > 0) {
                 const category = await Category.findOne({
                     _id: categoryId,
@@ -315,7 +344,9 @@ module.exports = {
 
     showImageItem: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const item = await Item.findOne({
                 _id: id,
             }).populate({
@@ -340,7 +371,9 @@ module.exports = {
 
     showEditItem: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const item = await Item.findOne({
                     _id: id,
                 })
@@ -376,8 +409,16 @@ module.exports = {
 
     editItem: async(req, res) => {
         try {
-            const { id } = req.params;
-            const { categoryId, title, price, city, about } = req.body;
+            const {
+                id
+            } = req.params;
+            const {
+                categoryId,
+                title,
+                price,
+                city,
+                about
+            } = req.body;
             const item = await Item.findOne({
                     _id: id,
                 })
@@ -428,7 +469,9 @@ module.exports = {
 
     deleteItem: async(req, res) => {
         try {
-            const { id } = req.params;
+            const {
+                id
+            } = req.params;
             const item = await Item.findOne({
                 _id: id,
             }).populate("imageId");
@@ -458,7 +501,9 @@ module.exports = {
     },
 
     viewDetailItem: async(req, res) => {
-        const { itemId } = req.params;
+        const {
+            itemId
+        } = req.params;
         try {
             const alertMessage = req.flash("alertMessage");
             const alertStatus = req.flash("alertStatus");
@@ -484,7 +529,11 @@ module.exports = {
     },
 
     addFeature: async(req, res) => {
-        const { name, qty, itemId } = req.body;
+        const {
+            name,
+            qty,
+            itemId
+        } = req.body;
 
         try {
             if (!req.file) {
@@ -517,7 +566,12 @@ module.exports = {
     },
 
     editFeature: async(req, res) => {
-        const { id, name, qty, itemId } = req.body;
+        const {
+            id,
+            name,
+            qty,
+            itemId
+        } = req.body;
         try {
             const feature = await Feature.findOne({
                 _id: id,
@@ -547,7 +601,10 @@ module.exports = {
     },
 
     deleteFeature: async(req, res) => {
-        const { id, itemId } = req.params;
+        const {
+            id,
+            itemId
+        } = req.params;
         const feature = await Feature.findOne({
             _id: id,
         });
@@ -576,7 +633,11 @@ module.exports = {
     },
 
     addActivity: async(req, res) => {
-        const { name, type, itemId } = req.body;
+        const {
+            name,
+            type,
+            itemId
+        } = req.body;
         try {
             if (!req.file) {
                 req.flash("alertMessage", "Image not found");
@@ -610,7 +671,9 @@ module.exports = {
     },
 
     viewDetailItem: async(req, res) => {
-        const { itemId } = req.params;
+        const {
+            itemId
+        } = req.params;
         try {
             const alertMessage = req.flash("alertMessage");
             const alertStatus = req.flash("alertStatus");
@@ -640,7 +703,12 @@ module.exports = {
     },
 
     editActivity: async(req, res) => {
-        const { id, name, type, itemId } = req.body;
+        const {
+            id,
+            name,
+            type,
+            itemId
+        } = req.body;
         try {
             const activity = await Activity.findOne({
                 _id: id,
@@ -670,7 +738,10 @@ module.exports = {
     },
 
     deleteActivity: async(req, res) => {
-        const { id, itemId } = req.params;
+        const {
+            id,
+            itemId
+        } = req.params;
         const activity = await Activity.findOne({
             _id: id,
         });
@@ -698,10 +769,83 @@ module.exports = {
         }
     },
 
-    viewBooking: (req, res) => {
-        res.render("admin/booking/view_booking", {
-            title: "Staycation | Booking",
-            user: req.session.user,
-        });
+    viewBooking: async(req, res) => {
+        try {
+            const booking = await Booking.find()
+                .populate('memberId')
+                .populate('bankId');
+            res.render("admin/booking/view_booking", {
+                title: "Staycation | Booking",
+                user: req.session.user,
+                booking
+            });
+        } catch (error) {
+            res.redirect(`/admin/booking`);
+        }
     },
+
+    showDetailBooking: async(req, res) => {
+        const {
+            id
+        } = req.params;
+        try {
+            const alertMessage = req.flash("alertMessage");
+            const alertStatus = req.flash("alertStatus");
+            const alert = {
+                alertMessage,
+                alertStatus,
+            };
+            const booking = await Booking.findOne({
+                    _id: id
+                })
+                .populate('memberId')
+                .populate('bankId');
+            res.render("admin/booking/show_detail_booking", {
+                title: "Staycation | Detail Booking",
+                user: req.session.user,
+                booking,
+                alert
+            });
+        } catch (error) {
+            res.redirect(`/admin/booking`);
+        }
+    },
+
+
+    actionConfirmation: async(req, res) => {
+        const {
+            id
+        } = req.params;
+        try {
+            const booking = await Booking.findOne({
+                _id: id
+            });
+            booking.payments.status = 'Accept';
+            await booking.save()
+            req.flash("alertMessage", "Success Payment Confirmation");
+            req.flash("alertStatus", "success");
+            res.redirect(`/admin/booking/${id}`);
+        } catch (error) {
+            res.redirect(`/admin/booking/${id}`);
+        }
+    },
+
+    actionReject: async(req, res) => {
+        const {
+            id
+        } = req.params;
+        try {
+            const booking = await Booking.findOne({
+                _id: id
+            });
+            booking.payments.status = 'Reject';
+            await booking.save()
+            req.flash("alertMessage", "Success Reject Payment Confirmation");
+            req.flash("alertStatus", "success");
+            res.redirect(`/admin/booking/${id}`);
+        } catch (error) {
+            res.redirect(`/admin/booking/${id}`);
+        }
+    },
+
 };

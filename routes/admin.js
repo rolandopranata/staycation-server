@@ -1,6 +1,9 @@
 const router = require("express").Router();
 const adminController = require("../controllers/adminController");
-const { uploadSingle, uploadMultiple } = require("../middleware/multer");
+const {
+    uploadSingle,
+    uploadMultiple
+} = require("../middleware/multer");
 const auth = require("../middleware/auth");
 
 router.get("/signin", adminController.viewSignin);
@@ -36,5 +39,8 @@ router.put("/item/update/activity", uploadSingle, adminController.editActivity);
 router.delete("/item/:itemId/activity/:id", adminController.deleteActivity);
 // endpoint booking
 router.get("/booking", adminController.viewBooking);
+router.get("/booking/:id", adminController.showDetailBooking);
+router.put("/booking/:id/confirmation", adminController.actionConfirmation);
+router.put("/booking/:id/reject", adminController.actionReject);
 
 module.exports = router;
