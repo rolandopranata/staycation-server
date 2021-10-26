@@ -3,8 +3,11 @@ const Treasure = require('../models/Activity');
 const Traveler = require('../models/Booking');
 const Category = require('../models/Category');
 const Bank = require('../models/Bank');
+const Member = require('../models/Member');
+const Booking = require('../models/Booking');
 
 module.exports = {
+    // API For Landing Page (GET Handle)
     landingPage: async(req, res) => {
         try {
             const mostPick = await Item.find() // get all data from item collections
@@ -73,13 +76,13 @@ module.exports = {
                 testimonial
             }); // check status 200, data akan dikirim
         } catch (e) {
-            console.log(e);
             res.status(500).json({
                 message: "Internal sever error!"
             });
         }
     },
 
+    // API For Detail Page (GET Handle)
     detailPage: async(req, res) => {
         try {
             const {
@@ -106,26 +109,127 @@ module.exports = {
 
             // Create data testimonial
             const testimonial = {
-                _id: "asd1293uasdads1",
-                imageUrl: "images/testimonial1.jpg",
-                name: "Happy Family",
-                rate: 4.45,
-                content: "What a great trip with my family and I should try again next time soon ...",
-                familyName: "Syafira",
-                familyOccupation: "Software Engineer"
-            }
-
-
+                    _id: "asd1293uasdads1",
+                    imageUrl: "images/testimonial1.jpg",
+                    name: "Happy Family",
+                    rate: 4.45,
+                    content: "What a great trip with my family and I should try again next time soon ...",
+                    familyName: "Syafira",
+                    familyOccupation: "Software Engineer"
+                }
+                // Handle if success 
             res.status(200).json({
                 ...item._doc,
                 bank,
                 testimonial
             });
         } catch (e) {
-            console.log(e);
             res.status(500).json({
                 message: "Internal sever error!"
             });
         }
+    },
+
+    // API For Booking Page (POST Handle)
+    bookingPage: async(req, res) => {
+
+        // Get data from user
+        const {
+            idItem,
+            duration,
+            bookingStartDate,
+            bookingEndDate,
+            firstName,
+            lastName,
+            email,
+            phoneNumber,
+            accountHolder,
+            bankFrom,
+        } = req.body;
+
+        // Check image when null
+        if (!req.file === null) {
+            return res.status(404).json({
+                message: "Image Not Found"
+            });
+        }
+
+
+        // Check all item must be filled
+        if (idItem === undefined ||
+            duration === undefined ||
+            bookingStartDate === undefined ||
+            bookingEndDate === undefined ||
+            firstName === undefined ||
+            lastName === undefined ||
+            email === undefined ||
+            phoneNumber === undefined ||
+            accountHolder === undefined ||
+            bankFrom === undefined) {
+            res.status(404).json({
+                message: "All field must be filled"
+            });
+        }
+
+        // Check id item
+        const item = await Item.findOne({
+            _id: idItem
+        });
+
+        // Check if item undefined
+        if (!item) {
+            return res.status(404).json({
+                message: "Item Not Found"
+            });
+        }
+
+        // If item not undefined, item will be increase
+        item.sumBooking += 1;
+
+        await item.save(); // save item into the database
+
+        let total = item.price * duration; // total 
+        let tax = total * 0.10; // tax
+
+        // handle invoice
+        const invoice = Math.floor(1000000 + Math.random() * 9000000);
+
+        // create member data
+        const member = await Member.create({
+            firstName,
+            lastName,
+            email,
+            phoneNumber
+        });
+
+        // create new data when user booking
+        const newBooking = {
+            invoice,
+            bookingStartDate,
+            bookingEndDate,
+            total: total += tax,
+            itemId: {
+                _id: item.id,
+                title: item.title,
+                price: item.price,
+                duration: duration
+            },
+            memberId: member.id,
+            payments: {
+                proofPayment: `images/${req.file.filename}`,
+                bankFrom: bankFrom,
+                accountHolder: accountHolder
+            }
+        }
+
+        // Handle create booking
+        const booking = await Booking.create(newBooking);
+
+        // send status when success
+        res.status(201).json({
+            message: "Success Booking",
+            booking
+        });
+
     }
 }

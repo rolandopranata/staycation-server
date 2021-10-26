@@ -8,10 +8,10 @@
         <thead>
           <tr>
             <th>No</th>
+            <th>Invoice</th>
             <th>Date</th>
             <th>Title</th>
             <th>Member Name</th>
-            <th>Bank Name</th>
             <th>Status</th>
             <th>Action</th>
           </tr>
@@ -23,6 +23,10 @@
                 <%= i + 1 %>
               </td>
               <td>
+                #
+                <%= data.invoice %>
+              </td>
+              <td>
                 <%= data.bookingStartDate.toLocaleString().split(',')[0] %> s/d
                   <%= data.bookingEndDate.toLocaleString().split(',')[0] %>
               </td>
@@ -32,9 +36,6 @@
               <td>
                 <%= data.memberId.firstName %>
                   <%= data.memberId.lastName %>
-              </td>
-              <td>
-                <%= data.bankId.nameBank %>
               </td>
               <td>
                 <%= data.payments.status %>
