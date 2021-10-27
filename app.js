@@ -11,13 +11,14 @@ const methodOvveride = require("method-override");
 // Mongoose connection
 mongoose.connect("mongodb://127.0.0.1:27017/db_staycation", {
     useNewUrlParser: true,
+    useUnifiedTopology: true,
 });
 
 const indexRouter = require("./routes/index");
 const usersRouter = require("./routes/users");
 // admin router
 const adminRouter = require("./routes/admin");
-const apiRouter = require('./routes/api');
+const apiRouter = require("./routes/api");
 
 const app = express();
 
@@ -52,7 +53,7 @@ app.use(
 );
 // Use admin routes
 app.use("/admin", adminRouter);
-app.use('/api/v1/member', apiRouter);
+app.use("/api/v1/member", apiRouter);
 
 app.use("/", indexRouter);
 app.use("/users", usersRouter);

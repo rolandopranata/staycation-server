@@ -5,9 +5,9 @@ const mongoose = require("mongoose");
 seeder.connect(
     "mongodb://127.0.0.1:27017/db_staycation", {
         useNewUrlParser: true,
-        // useCreateIndex: true,
-        // useFindAndModify: true,
-        // useUnifiedTopology: true,
+        useCreateIndex: true,
+        useFindAndModify: true,
+        useUnifiedTopology: true,
     },
     function() {
         // Load Mongoose models
