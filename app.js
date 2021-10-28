@@ -9,7 +9,7 @@ const flash = require("connect-flash");
 const methodOvveride = require("method-override");
 
 // Mongoose connection
-mongoose.connect("mongodb://127.0.0.1:27017/db_staycation", {
+mongoose.connect("mongodb+srv://rolandopranatavz:KhalenPblink321@cluster0.rmvgd.mongodb.net/db_staycation?retryWrites=true&w=majority", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
 });

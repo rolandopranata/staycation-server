@@ -6,21 +6,21 @@
   <div class="card-body">
     <div class="row">
       <div class="col-md-4">
-        <img class="mt-2" src="http://localhost:3000/<%= booking.payments.proofPayment %> " alt="Image Category" style="width: 100%; display: block;">
+        <img class="mt-2" src="https://admin-vaycation.herokuapp.com/<%= booking.payments.proofPayment %> " alt="Image Category" style="width: 100%; display: block;">
         <hr>
         <div class="d-flex mt-3">
           <% if (booking.payments.status === 'Proses') { %>
             <form class="d-flex justify-content-center align-items-center" action="/admin/booking/<%= booking.id %>/confirmation?_method=PUT" method="POST">
               <button type="submit" href="" class="btn btn-success btn-sm ml-2">
-                     Confirmation
-                     <i class="fas fa-check"></i>
-                  </button>
+              Confirmation
+              <i class="fas fa-check"></i>
+            </button>
             </form>
             <form class="d-flex justify-content-center align-items-center" action="/admin/booking/<%= booking.id %>/reject?_method=PUT" method="POST">
               <button type="submit" href="" class="btn btn-danger btn-sm ml-2">
-                     Reject
-                     <i class="fas fa-times"></i>
-                  </button>
+              Reject
+              <i class="fas fa-times"></i>
+            </button>
             </form>
             <% } %>
         </div>
