@@ -40,7 +40,7 @@ module.exports = {
                     }
                 });
 
-            // Create condition for set isPopular true into itemId terbesat yaitu karena data sudah disort dari 0
+            // Create condition for set isPopular true into itemId terbesar yaitu karena data sudah disort dari 0
             for (let i = 0; i < category.length; i++) {
                 for (let x = 0; x < category[i].itemId.length; x++) {
                     const item = await Item.findOne({
